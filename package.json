@@ -1,0 +1,15 @@
+{
+  "name": "khata-book",
+  "version": "1.0.0",
+  "description": "Project to manage the khata list for shop.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "backend",
+    "Node"
+  ],
+  "author": "Harshal Supare",
+  "license": "ISC"
+}
