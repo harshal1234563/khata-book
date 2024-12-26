@@ -13,5 +13,8 @@ app.use(express.urlencoded({extended: true, limit: API_JSON_LIMIT}))
 app.use(express.static("public"));
 app.use(cookieParser());
 
+// Router imports
+import setUpRoutes from "./routes/apiFactor.routes.js"
+setUpRoutes(app);
 // export APP
 export {app}
