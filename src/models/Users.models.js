@@ -1,5 +1,5 @@
 import mongoose, {Schema} from "mongoose";
-import bycrypt from "bycrypt";
+import bycrypt from "bcryptjs";
 import jwt from "jsonwebtoken"
 
 const userSchema = new Schema(
@@ -47,7 +47,7 @@ const userSchema = new Schema(
 // call hook for schema
 userSchema.pre("save", async function (next) {
     if (!this.isModified("password")) return next();
-    this.password = bycrypt.hash(this.password, 10);
+    this.password = await bycrypt.hash(this.password, 10);
 });
 
 // add custom method in schema
