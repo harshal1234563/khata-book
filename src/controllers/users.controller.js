@@ -3,6 +3,12 @@ import {User} from "../models/Users.models.js";
 import {ApiError} from "../utils/ApiError.js";
 import {ApiResponse} from "../utils/ApiResponse.js";
 import {uploadFile} from "../services/cloudinary.service.js";
+import jwt from "jsonwebtoken";
+
+const opt = {
+    httpOnly: true,
+    secure: true
+}
 
 const generateAccessAndRefreshToken = async (user) => {
     try {
@@ -70,10 +76,6 @@ const loginUser = asyncHandler(async (req, res) => {
     const {accessToken, refreshToken} = await generateAccessAndRefreshToken(user);
     const loggedInUser = await User.findById(user._id, '-password -refreshToken');
 
-    const opt = {
-        httpOnly: true,
-        secure: true
-    }
     return res.status(200).cookie("accessToken", accessToken, opt).cookie("refreshToken", refreshToken, opt).json(new ApiResponse(200, {
         loggedInUser,
         accessToken,
@@ -83,10 +85,27 @@ const loginUser = asyncHandler(async (req, res) => {
 
 const logOutUser = asyncHandler(async (req, res) => {
     await User.findByIdAndUpdate(req.user?._id, {$set: {refreshToken: undefined}}, {new: true});
-    const opt = {
-        httpOnly: true,
-        secure: true
-    }
+
     return res.status(200).clearCookie("accessToken", opt).clearCookie("refreshToken", opt).json(new ApiResponse(200, {}, "User logged out success fully!"))
 })
-export {registerUser, loginUser, logOutUser};
+
+const refreshAccessToken = asyncHandler(async (req, res) => {
+    const incomingRequestedToken = req.cookies?.refreshToken || req.body?.refreshToken;
+
+    if (!incomingRequestedToken) throw new ApiError(401, "Un-Authorize request");
+
+    const decodedToken = jwt.verify(incomingRequestedToken, process.env.REFRESH_TOKEN_SECRET);
+    const user = await User.findById(decodedToken?._id);
+    if (!user) throw new ApiError(401, "Invalid refresh token")
+
+    if (incomingRequestedToken !== user?.refreshToken) {
+        throw new ApiError(401, "Refresh toke is expired or used");
+    }
+
+    const {accessToken, newRefreshToken} = generateAccessAndRefreshToken(user);
+    return res.status(200).cookie("accessToken", accessToken, opt).cookie("refreshToken", newRefreshToken, opt).json(200, {
+        accessToken,
+        refreshToken: newRefreshToken
+    }, "Access token refreshed successfully!")
+})
+export {registerUser, loginUser, logOutUser, refreshAccessToken};
