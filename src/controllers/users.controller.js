@@ -108,4 +108,13 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         refreshToken: newRefreshToken
     }, "Access token refreshed successfully!")
 })
+
+// create method to change the password
+
+// create method to get the user details
+
+// create method to update the details
+
+// create method to update the avatar(add support to delete the previous file uploaded by user)
+
 export {registerUser, loginUser, logOutUser, refreshAccessToken};

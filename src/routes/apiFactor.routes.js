@@ -1,7 +1,7 @@
 import usersRoutes from "./users.routes.js";
 
 const API_PREFIX = '/api/v1';
-const getURL = (url) => `${API_PREFIX}/${url}`;
+export const getURL = (url) => `${API_PREFIX}/${url}`;
 
 
 export default (app) => {

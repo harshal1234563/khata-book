@@ -15,6 +15,8 @@ app.use(cookieParser());
 
 // Router imports
 import setUpRoutes from "./routes/apiFactor.routes.js"
+import {verifyJWT} from "./middlewares/auth.middlewares.js";
+app.use(verifyJWT); // AUTHORIZATION middleware to check authentication
 setUpRoutes(app);
 // export APP
 export {app}
