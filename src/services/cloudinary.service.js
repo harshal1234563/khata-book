@@ -21,4 +21,14 @@ const uploadFile = async (localFilePath) => {
     }
 }
 
-export {uploadFile};
+const deleteFile = async (publicId) => {
+    try {
+        const response = await cloudinary.uploader.destroy(publicId);
+        return response.result?.toLowerCase() === "ok";
+    } catch (e) {
+        console.error("Error occurred while deleting file: ", e.message)
+    }
+}
+
+const getPublicId = (url) => url.split('/').pop().split('.')[0];
+export {uploadFile, deleteFile, getPublicId};

@@ -2,7 +2,7 @@ import {asyncHandler} from "../utils/asynchandler.js";
 import {User} from "../models/Users.models.js";
 import {ApiError} from "../utils/ApiError.js";
 import {ApiResponse} from "../utils/ApiResponse.js";
-import {uploadFile} from "../services/cloudinary.service.js";
+import {deleteFile, getPublicId, uploadFile} from "../services/cloudinary.service.js";
 import jwt from "jsonwebtoken";
 
 const opt = {
@@ -143,6 +143,11 @@ const updateAvatar = asyncHandler(async (req, res) => {
     const avatar = await uploadFile(avatarLocalPath);
     // check avatar updated successfully
     if (!avatar) throw new ApiError(500, "Error occurred while uploading file");
+
+    const existingFilePublicId = getPublicId(req.user?.avatar); // get publicId to delete the file
+
+    const isAvatarDeleted = await deleteFile(existingFilePublicId);
+    console.warn(isAvatarDeleted ? "Existing avatar file deleted successfully" : "")
 
     // update avatar field in DB.
     const user = await User.findByIdAndUpdate(req.user?._id, {$set: {avatar: avatar.url}}, {new: true});
