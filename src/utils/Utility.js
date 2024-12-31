@@ -1,0 +1,1 @@
+export const getCurrentUserId = (req) => req?.user?._id || "";
