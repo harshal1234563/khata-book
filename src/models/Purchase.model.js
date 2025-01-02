@@ -2,6 +2,19 @@ import mongoose, {Schema} from "mongoose";
 import {PAID_ENUM} from "../constants.js";
 
 const purchaseSchema = new Schema({
+    purchaseDetails: {
+        type: String,
+        required: true,
+        lowercase: true,
+        trim: true,
+        default: ""
+    },
+    totalAmount:{
+        type:Number,
+        required:true,
+        default:0,
+        min:0
+    },
     amount: {
         type: Number,
         required: true,
@@ -24,7 +37,7 @@ const purchaseSchema = new Schema({
     },
     modifiedBy: {
         type: String,
-        required: true
+        required: true,
     },
     customerId: {
         type: Schema.Types.ObjectId,
