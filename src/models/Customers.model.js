@@ -17,29 +17,27 @@ const customerSchema = new Schema(
             trim: true,
             match: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
         },
-        totalPurchaseAmount: {
-            type: Number,
-            required: true,
-            default: 0,
-            min: 0
-        },
-        totalDebt: {
-            type: Number,
-            required: true,
-            default: 0,
-            min: 0
-        },
         modifyBy: {
             type: String,
-            required:true
+            required: true,
+            default: ""
         },
         createdBy: {
             type: String,
-            required:true
+            required: true
         },
         storeId: {
             type: Schema.Types.ObjectId,
-            ref: "Store"
+            ref: "Store",
+            required: true
+        },
+        purchaseHistory: {
+            type: Schema.Types.ObjectId,
+            ref: "Purchase"
+        },
+        paymentHistory: {
+            type: Schema.Types.ObjectId,
+            ref: "Payment"
         }
     },
     {timestamps: true});
