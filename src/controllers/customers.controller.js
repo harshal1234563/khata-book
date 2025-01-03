@@ -86,8 +86,73 @@ const getCustomerDetailsById = asyncHandler(async (req, res) => {
     if (!customer) throw new ApiError(400, "Customer does not exist for given Id");
     return res.status(200).json(new ApiResponse(200, customer, "Fetched customer details successfully!"));
 })
-// get customer purchase history
 
+// get customer purchase history
+const getPurchaseHistory = asyncHandler(async (req, res) => {
+    const customerId = req.params?.id;
+    if (!customerId) throw new ApiError(400, "Invalid customerId");
+
+    const data = await Customer.aggregate([
+            {
+                '$match': {
+                    'phone': 7741974134,
+                    'email': 'harshal123@gmail.com'
+                }
+            }, {
+            '$lookup': {
+                'from': 'purchases',
+                'localField': '_id',
+                'foreignField': 'customerId',
+                'as': 'purchaseHistory'
+            }
+        }, {
+            '$addFields': {
+                'totalPurchase': {
+                    '$reduce': {
+                        'input': '$purchaseHistory',
+                        'initialValue': 0,
+                        'in': {
+                            '$add': [
+                                '$$value', '$$this.totalAmount'
+                            ]
+                        }
+                    }
+                },
+                'totalDebt': {
+                    '$reduce': {
+                        'input': '$purchaseHistory',
+                        'initialValue': 0,
+                        'in': {
+                            '$add': [
+                                '$$value', {
+                                    '$subtract': [
+                                        '$$this.totalAmount', '$$this.amount'
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }, {
+            '$project': {
+                'totalDebt': 1,
+                'totalPurchase': 1,
+                'name': 1,
+                'phone': 1,
+                'purchaseHistory': 1
+            }
+        }
+        ]);
+    return res.status(200).json(new ApiResponse(200, data, ""));
+})
 // get customer payment history
 
-export {createCustomer, updateCustomer, deleteCustomer, getCustomersListByStoreId, getCustomerDetailsById}
+export {
+    createCustomer,
+    updateCustomer,
+    deleteCustomer,
+    getCustomersListByStoreId,
+    getCustomerDetailsById,
+    getPurchaseHistory
+}

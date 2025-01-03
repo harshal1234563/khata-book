@@ -1,5 +1,6 @@
 import mongoose, {Schema} from "mongoose";
 import {PAID_ENUM} from "../constants.js";
+import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 
 const purchaseSchema = new Schema({
     purchaseDetails: {
@@ -45,5 +46,6 @@ const purchaseSchema = new Schema({
         required: true
     }
 }, {timestamps: true});
+purchaseSchema.plugin(mongooseAggregatePaginate)
 
 export const Purchase = mongoose.model("Purchase", purchaseSchema);

@@ -1,4 +1,5 @@
 import mongoose, {Schema} from "mongoose";
+import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 
 const customerSchema = new Schema(
     {
@@ -41,5 +42,6 @@ const customerSchema = new Schema(
         }
     },
     {timestamps: true});
+customerSchema.plugin(mongooseAggregatePaginate)
 
 export const Customer = mongoose.model("Customer", customerSchema);
