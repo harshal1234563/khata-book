@@ -3,6 +3,7 @@ import {ApiError} from "../utils/ApiError.js";
 import {Customer} from "../models/Customers.model.js";
 import {ApiResponse} from "../utils/ApiResponse.js";
 import {getCurrentUserId} from "../utils/Utility.js";
+import mongoose from "mongoose";
 
 
 // create customers
@@ -95,8 +96,7 @@ const getPurchaseHistory = asyncHandler(async (req, res) => {
     const data = await Customer.aggregate([
             {
                 '$match': {
-                    'phone': 7741974134,
-                    'email': 'harshal123@gmail.com'
+                    '_id': new mongoose.Types.ObjectId(customerId),
                 }
             }, {
             '$lookup': {
